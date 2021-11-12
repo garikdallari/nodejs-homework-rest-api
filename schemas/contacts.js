@@ -5,5 +5,9 @@ const contactSchema = Joi.object({
   email: Joi.string().email().required(),
   phone: Joi.string().min(10).required(),
 });
-
-module.exports = contactSchema;
+const contactPatchSchema = Joi.object({
+  name: Joi.string().min(2),
+  email: Joi.string().email(),
+  phone: Joi.string().min(10),
+});
+module.exports = { contactSchema, contactPatchSchema };

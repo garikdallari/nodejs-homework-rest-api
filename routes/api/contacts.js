@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { contactSchema } = require("../../schemas");
+const { contactSchema, contactPatchSchema } = require("../../schemas");
 const {
   listContacts,
   getContactById,
@@ -82,6 +82,57 @@ router.delete("/:contactId", async (req, res, next) => {
   }
 });
 
-router.put("/:contactId", async (req, res, next) => {});
+router.put("/:contactId", async (req, res, next) => {
+  try {
+    const { error } = contactSchema.validate(req.body);
+    if (error) {
+      const err = new Error(error.message);
+      err.status = 400;
+      throw err;
+    }
+
+    const { contactId } = req.params;
+    const result = await updateContactById(contactId, req.body);
+    console.log(result);
+    if (!result) {
+      const error = new Error("Not Found");
+      error.status = 404;
+      throw error;
+    }
+    res.json({
+      data: {
+        result,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+router.patch("/:contactId", async (req, res, next) => {
+  try {
+    const { error } = contactPatchSchema.validate(req.body);
+    if (error) {
+      const err = new Error(error.message);
+      err.status = 400;
+      throw err;
+    }
+
+    const { contactId } = req.params;
+    const result = await updateContactById(contactId, req.body);
+    console.log(result);
+    if (!result) {
+      const error = new Error("Not Found");
+      error.status = 404;
+      throw error;
+    }
+    res.json({
+      data: {
+        result,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+});
 
 module.exports = router;

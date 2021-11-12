@@ -42,7 +42,21 @@ const addContact = async (body) => {
   return newContact;
 };
 
-const updateContactById = async (contactId, body) => {};
+const updateContactById = async (contactId, body) => {
+  const contacts = await listContacts();
+  const index = contacts.findIndex(
+    (contact) => contact.id === Number(contactId)
+  );
+
+  if (index === -1) {
+    return null;
+  }
+
+  const updatedContact = { ...contacts[index], ...body };
+  contacts[index] = updatedContact;
+  await updateContacts(contacts);
+  return updatedContact;
+};
 
 const updateContacts = async (newContact) => {
   await fs.writeFile(filePath, JSON.stringify(newContact));
