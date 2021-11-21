@@ -13,5 +13,6 @@ const { auth: ctrl } = require("../../controllers");
 router.post("/signup", validation(joiSchema), controllerWrapper(ctrl.register));
 router.post("/login", validation(joiSchema), controllerWrapper(ctrl.login));
 router.post("/logout", authenticate, controllerWrapper(ctrl.logout));
+router.get("/current", authenticate, controllerWrapper(ctrl.currentUser));
 
 module.exports = router;
