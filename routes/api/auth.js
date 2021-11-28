@@ -18,7 +18,7 @@ router.get("/current", authenticate, controllerWrapper(ctrl.currentUser));
 router.patch(
   "/avatars",
   authenticate,
-  upload.single("image"),
+  upload.single("avatar"),
   controllerWrapper(ctrl.updateAvatar)
 );
 
