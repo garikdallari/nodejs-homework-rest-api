@@ -4,8 +4,10 @@ const { Contact } = require("../models");
 
 const { sendSuccessRes } = require("../helpers");
 
-const getContacts = async (_, res) => {
-  const result = await Contact.find({});
+const getContacts = async (req, res) => {
+  const { page = 1, limit = 100 } = req.query;
+  const skip = (page - 1) * limit;
+  const result = await Contact.find({}, null, { skip, limit: +limit });
   sendSuccessRes(res, { data: result });
 };
 
