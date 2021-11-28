@@ -1,129 +1,60 @@
 const createError = require("http-errors");
-const { contactSchema, contactPatchSchema } = require("../schemas");
-const {
-  listContacts,
-  getContactById,
-  addContact,
-  removeContact,
-  updateContactById,
-} = require("../model");
 
-const getContacts = async (req, res, next) => {
-  try {
-    const result = await listContacts();
-    res.json({
-      data: {
-        result,
-      },
-    });
-  } catch (error) {
-    next(error);
-  }
+const { Contact } = require("../models");
+
+const { sendSuccessRes } = require("../helpers");
+
+const getContacts = async (_, res) => {
+  const result = await Contact.find({});
+  sendSuccessRes(res, { data: result });
 };
 
-const getById = async (req, res, next) => {
-  try {
-    const { contactId } = req.params;
-    const result = await getContactById(contactId);
+const getById = async (req, res) => {
+  const { contactId } = req.params;
+  const result = await Contact.findById(contactId);
 
-    if (!result) {
-      throw new createError(404);
-    }
-
-    res.json({
-      data: {
-        result,
-      },
-    });
-  } catch (error) {
-    next(error);
+  if (!result) {
+    throw new createError(404);
   }
+  sendSuccessRes(res, { data: result });
 };
 
-const addCont = async (req, res, next) => {
-  try {
-    const { error } = contactSchema.validate(req.body);
-    if (error) {
-      throw new createError(400, error.message);
-    }
-
-    const result = await addContact(req.body);
-    res.status(201).json({
-      data: {
-        result,
-      },
-    });
-  } catch (error) {
-    next(error);
-  }
+const addCont = async (req, res) => {
+  const result = await Contact.create(req.body);
+  sendSuccessRes(res, { data: result }, 201);
 };
 
-const deleteContact = async (req, res, next) => {
-  try {
-    const { contactId } = req.params;
+const deleteContact = async (req, res) => {
+  const { contactId } = req.params;
 
-    const result = await removeContact(contactId);
+  const result = await Contact.findByIdAndDelete(contactId);
 
-    if (!result) {
-      throw new createError(404);
-    }
-
-    res.json({
-      message: "Contact Deleted",
-    });
-  } catch (error) {
-    next(error);
+  if (!result) {
+    throw new createError(404);
   }
+  sendSuccessRes(res, { message: "Contact Deleted" });
 };
 
-const changeContact = async (req, res, next) => {
-  try {
-    const { error } = contactSchema.validate(req.body);
-    if (error) {
-      throw new createError(400, error.message);
-    }
-
-    const { contactId } = req.params;
-    const result = await updateContactById(contactId, req.body);
-    console.log(result);
-    if (!result) {
-      const error = new Error("Not Found");
-      error.status = 404;
-      throw error;
-    }
-    res.json({
-      data: {
-        result,
-      },
-    });
-  } catch (error) {
-    next(error);
+const updateContact = async (req, res) => {
+  const { contactId } = req.params;
+  const result = await Contact.findByIdAndUpdate(contactId, req.body, {
+    new: true,
+  });
+  if (!result) {
+    throw new createError(404);
   }
+  sendSuccessRes(res, { data: result });
 };
 
-const changeContactStats = async (req, res, next) => {
-  try {
-    const { error } = contactPatchSchema.validate(req.body);
-    if (error) {
-      throw new createError(400, error.message);
-    }
-
-    const { contactId } = req.params;
-    const result = await updateContactById(contactId, req.body);
-    console.log(result);
-    if (!result) {
-      const error = new Error("Not Found");
-      error.status = 404;
-      throw error;
-    }
-    res.json({
-      data: {
-        result,
-      },
-    });
-  } catch (error) {
-    next(error);
+const updateStatusContact = async (req, res) => {
+  const { contactId } = req.params;
+  const result = await Contact.findByIdAndUpdate(contactId, req.body, {
+    new: true,
+  });
+  if (!result) {
+    throw new createError(404);
   }
+  sendSuccessRes(res, { data: result });
 };
 
 module.exports = {
@@ -131,6 +62,6 @@ module.exports = {
   getById,
   addCont,
   deleteContact,
-  changeContact,
-  changeContactStats,
+  updateContact,
+  updateStatusContact,
 };
