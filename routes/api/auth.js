@@ -10,6 +10,7 @@ const {
 const { joiSchema } = require("../../models/user");
 
 const { auth: ctrl } = require("../../controllers");
+const { Router } = require("express");
 
 router.post("/signup", validation(joiSchema), controllerWrapper(ctrl.register));
 router.post("/login", validation(joiSchema), controllerWrapper(ctrl.login));
@@ -21,5 +22,6 @@ router.patch(
   upload.single("avatar"),
   controllerWrapper(ctrl.updateAvatar)
 );
+router.get("/verify/:verificationToken", controllerWrapper(ctrl.verify));
 
 module.exports = router;

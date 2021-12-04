@@ -24,6 +24,14 @@ const userSchema = Schema({
     type: String,
     default: "",
   },
+  verify: {
+    type: Boolean,
+    default: false,
+  },
+  verificationToken: {
+    type: String,
+    required: [true, "Verify token is required"],
+  },
 });
 
 const joiSchema = Joi.object({
